@@ -1,25 +1,62 @@
 <?php
-//1
-echo "Введите строку для задачи 1:\n";
-$str = trim(fgets(STDIN));
+$txt_files = glob('*.txt');
 
-$str = preg_replace_callback("/'(\\d+)'/", function ($m) {
-    return "'" . ($m[1] * 2) . "'";
-}, $str);
-
-echo "Результат:\n";
-echo $str . PHP_EOL;
-
-//2
-echo "\nВведите текст со ссылками для задачи 2:\n";
-$text = trim(fgets(STDIN));
-
-$text = preg_replace(
-    "/https?:\/\/asozd\.duma\.gov\.ru\/main\.nsf\/\(Spravka\)\?OpenAgent&RN=([0-9\-]+)&\d+/",
-    "http://sozd.parlament.gov.ru/bill/$1", $text
-);
-
-echo "Результат:\n";
-echo $text . PHP_EOL;
-
+foreach ($txt_files as $filename) {
+    echo "$filename\n";
+    
+    $content = file_get_contents($filename);
+    $blocks = explode("\n\n", trim($content));
+    
+    foreach ($blocks as $block) {
+        if (trim($block) === '') continue;
+        
+        $inputLines = explode("\n", trim($block));
+        
+        $banners = [];
+        $total_shows = pow(10,6);
+        
+        foreach ($inputLines as $input) {
+            $temp = preg_split('/\s+/', trim($input));
+            if (count($temp) < 2) continue;
+            
+            $banner_id = $temp[0];
+            $weight = (float)$temp[1];
+            
+            $banners[] = [
+                'id' => $banner_id,
+                'weight' => $weight,
+                'shows' => 0
+            ];
+        }
+        
+        $total_weight = 0;
+        foreach ($banners as $banner) {
+            $total_weight += $banner['weight'];
+        }
+        
+        for ($i = 0; $i < $total_shows; $i++) {
+            $rand = mt_rand(1, $total_weight);
+            $current_sum = 0;
+            
+            foreach ($banners as &$banner) {
+                $current_sum += $banner['weight'];
+                if ($rand <= $current_sum) {
+                    $banner['shows']++;
+                    break;
+                }
+            }
+        }
+        
+        unset($banner);
+        
+        foreach ($banners as $banner) {
+            $proportion = $banner['shows'] / $total_shows;
+            echo $banner['id'] . " " . number_format($proportion, 6, '.', '') . "\n";
+        }
+        
+        echo "\n";
+    }
+    
+    echo "------------------------\n\n";
+}
 ?>

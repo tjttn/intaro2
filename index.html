@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма обратной связи</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #FFD1B3 0%, #FFB347 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #FF8C42;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #FFD1B3;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #FF8C42;
+            box-shadow: 0 0 5px rgba(255, 140, 66, 0.3);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #FFB347 0%, #FF8C42 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 140, 66, 0.3);
+        }
+        .error {
+            border-color: #FF6B6B !important;
+            background-color: #FFF0F0;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        .hint {
+            font-size: 12px;
+            color: #FFB347;
+            margin: -5px 0 10px 0;
+        }
+        .success-card {
+            background: linear-gradient(135deg, #FFF5E6 0%, #FFE8D6 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #FF8C42;
+        }
+        .success-card h3 {
+            color: #FF8C42;
+            margin-bottom: 15px;
+        }
+        .success-card p {
+            margin: 8px 0;
+            color: #6B4E3D;
+        }
+        .success-card hr {
+            margin: 15px 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, #FFD1B3, transparent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍑 Форма обратной связи</h1>
+        <div id="form-block">
+            <form id="form">
+                <input type="text" id="fio" placeholder="ФИО (Иванов Иван Иванович)">
+                <input type="email" id="email" placeholder="Email">
+                <input type="tel" id="phone" placeholder="Телефон (+71234567890)">
+                <textarea id="comment" placeholder="Комментарий (от 5 до 500 символов)"></textarea>
+                <button type="submit">Отправить заявку</button>
+            </form>
+        </div>
+        <div id="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
