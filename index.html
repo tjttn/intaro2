@@ -3,119 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Форма обратной связи</title>
+    <title>Геокодер Яндекс.Карт</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #FFD1B3 0%, #FFB347 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
+
         .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
             background: white;
             border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            margin-bottom: 20px;
         }
-        h1 {
-            color: #FF8C42;
-            margin-bottom: 30px;
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
             text-align: center;
-            font-size: 28px;
         }
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #FFD1B3;
-            border-radius: 8px;
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
             font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
             transition: all 0.3s;
         }
-        input:focus, textarea:focus {
+
+        input[type="text"]:focus {
             outline: none;
-            border-color: #FF8C42;
-            box-shadow: 0 0 5px rgba(255, 140, 66, 0.3);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+
         button {
             width: 100%;
-            background: linear-gradient(135deg, #FFB347 0%, #FF8C42 100%);
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 10px;
             font-size: 16px;
-            font-weight: bold;
-            margin-top: 10px;
+            font-weight: 600;
+            cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
+
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 140, 66, 0.3);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .result-section p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .coordinates {
+            font-family: monospace;
+            font-size: 16px;
+            background: #f0f0f0;
+            padding: 8px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
         .error {
-            border-color: #FF6B6B !important;
-            background-color: #FFF0F0;
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #c33;
         }
-        #result {
+
+        .loading {
+            display: none;
+            text-align: center;
             margin-top: 20px;
         }
-        .hint {
-            font-size: 12px;
-            color: #FFB347;
-            margin: -5px 0 10px 0;
+
+        .loading.show {
+            display: block;
         }
-        .success-card {
-            background: linear-gradient(135deg, #FFF5E6 0%, #FFE8D6 100%);
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #FF8C42;
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
         }
-        .success-card h3 {
-            color: #FF8C42;
-            margin-bottom: 15px;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .success-card p {
-            margin: 8px 0;
-            color: #6B4E3D;
+
+        .example {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #999;
+            text-align: center;
         }
-        .success-card hr {
-            margin: 15px 0;
-            border: none;
-            height: 1px;
-            background: linear-gradient(to right, #FFD1B3, transparent);
+
+        .example span {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .example span:hover {
+            color: #764ba2;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🍑 Форма обратной связи</h1>
-        <div id="form-block">
-            <form id="form">
-                <input type="text" id="fio" placeholder="ФИО (Иванов Иван Иванович)">
-                <input type="email" id="email" placeholder="Email">
-                <input type="tel" id="phone" placeholder="Телефон (+71234567890)">
-                <textarea id="comment" placeholder="Комментарий (от 5 до 500 символов)"></textarea>
-                <button type="submit">Отправить заявку</button>
-            </form>
+        <div class="card">
+            <div class="header">
+                <h1>🗺️ Геокодер Яндекс.Карт</h1>
+                <p>Преобразование адреса в координаты и структурированные данные</p>
+            </div>
+            <div class="content">
+                <div class="input-group">
+                    <label for="address">📍 Введите адрес</label>
+                    <input type="text" id="address" placeholder="Например: Москва, Красная площадь, 1" autocomplete="off">
+                </div>
+                <button onclick="geocode()">🔍 Найти</button>
+                
+                <div class="example">
+                    Примеры: 
+                    <span onclick="setExample('Москва, Тверская улица, 7')">Тверская 7</span> | 
+                    <span onclick="setExample('Санкт-Петербург, Невский проспект, 28')">Невский 28</span> | 
+                    <span onclick="setExample('Казань, Кремлевская улица, 2')">Казань Кремль</span>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #666;">Поиск адреса...</p>
+                </div>
+
+                <div class="result" id="result"></div>
+            </div>
         </div>
-        <div id="result"></div>
     </div>
-    <script src="script.js"></script>
+
+
+    <script>
+        function setExample(address) {
+            document.getElementById('address').value = address;
+            geocode();
+        }
+
+        async function geocode() {
+            const address = document.getElementById('address').value.trim();
+            
+            if (!address) {
+                showError('Пожалуйста, введите адрес');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            
+            resultDiv.classList.remove('show');
+            loadingDiv.classList.add('show');
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('geocode.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'address=' + encodeURIComponent(address)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResult(data.data);
+                } else {
+                    showError(data.error || 'Произошла ошибка при геокодировании');
+                }
+            } catch (error) {
+                showError('Ошибка сети: ' + error.message);
+            } finally {
+                loadingDiv.classList.remove('show');
+            }
+        }
+
+        function displayResult(data) {
+            const resultDiv = document.getElementById('result');
+            
+            let metroHtml = '';
+            if (data.metro) {
+                metroHtml = `
+                    <div class="result-section">
+                        <h3>🚇 Ближайшее метро</h3>
+                        <p>${data.metro}</p>
+                    </div>
+                `;
+            } else {
+                metroHtml = `
+                    <div class="result-section">
+                        <h3>🚇 Ближайшее метро</h3>
+                        <p>Не найдено в радиусе 3 км</p>
+                    </div>
+                `;
+            }
+
+            resultDiv.innerHTML = `
+                <div class="result-section">
+                    <h3>📋 Структурированный адрес</h3>
+                    <p>${formatAddress(data.structured)}</p>
+                </div>
+                <div class="result-section">
+                    <h3>📍 Координаты</h3>
+                    <p><span class="coordinates">${data.coordinates}</span></p>
+                </div>
+                ${metroHtml}
+            `;
+            
+            resultDiv.classList.add('show');
+        }
+
+        function formatAddress(address) {
+            const parts = [];
+            if (address.country) parts.push(`<strong>Страна:</strong> ${address.country}`);
+            if (address.region) parts.push(`<strong>Регион:</strong> ${address.region}`);
+            if (address.city) parts.push(`<strong>Город:</strong> ${address.city}`);
+            if (address.street) parts.push(`<strong>Улица:</strong> ${address.street}`);
+            if (address.house) parts.push(`<strong>Дом:</strong> ${address.house}`);
+            if (address.formatted) parts.push(`<br><strong>Полный адрес:</strong> ${address.formatted}`);
+            
+            return parts.join('<br>');
+        }
+
+        function showError(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div class="error">
+                    <strong>⚠️ Ошибка</strong><br>
+                    ${message}
+                </div>
+            `;
+            resultDiv.classList.add('show');
+        }
+
+        async function geocode() {
+            const address = document.getElementById('address').value.trim();
+            
+            if (!address) {
+                showError('Пожалуйста, введите адрес');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            
+            resultDiv.classList.remove('show');
+            loadingDiv.classList.add('show');
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('geocode.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'address=' + encodeURIComponent(address)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResult(data.data);
+                } else {
+                    showError(data.error || 'Произошла ошибка при геокодировании');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Ошибка сети: ' + error.message);
+            } finally {
+                loadingDiv.classList.remove('show');
+            }
+        }
+
+        // Обработка Enter
+        document.getElementById('address').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                geocode();
+            }
+        });
+    </script>
 </body>
 </html>
